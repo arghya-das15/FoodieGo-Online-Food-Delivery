@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="FoodieGo - Online Food Delivery System">
+    <title>FoodieGo | Online Food Delivery</title>
+    <link rel="stylesheet" href="style.css">
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+<body>
+<div id="foodieBackendStatus" style="position:fixed;right:14px;bottom:14px;z-index:9999;padding:8px 12px;border-radius:999px;background:#fff;border:1px solid #ddd;font-size:12px;box-shadow:0 4px 15px rgba(0,0,0,.08)">Backend: checking…</div>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+    <a class="logo" href="#home">🍴 <span>Foodie</span>Go</a>
+    <div class="nav-links">
+        <a href="#home">Home</a>
+        <a href="#restaurants">Restaurants</a>
+        <a href="#menu">Menu</a>
+        <a href="#orders">Orders</a>
+        <a href="#offers">Offers</a>
+    </div>
+    <div class="nav-buttons">
+        <button class="icon-btn" onclick="toggleDarkMode()" title="Dark mode">🌙</button>
+        <button onclick="openProfile()">👤 Profile</button><button onclick="openAuth()">🔐 Account</button><button onclick="openAdmin()">⚙️ Admin</button>
+        <button class="cart-button" onclick="openCart()">🛒 Cart <span id="cartCount">0</span></button>
+    </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+    <div class="hero-content">
+        <div class="badge">⚡ FAST DELIVERY • FRESH FOOD</div>
+        <h1>Good Food.<br><span>Good Mood.</span></h1>
+        <p>Order delicious meals from the best restaurants around you and get them delivered fresh and fast.</p>
+
+        <div class="location-pill" onclick="openAddress()">
+            📍 <span id="currentAddress">Add delivery address</span> <b>Change</b>
+        </div>
+
+        <div class="search-box">
+            <span>🔍</span>
+            <input type="text" id="searchInput" placeholder="Search pizza, burger, biryani..." onkeyup="searchFood()">
+            <button onclick="searchFood()">Search</button>
+        </div>
+
+        <div class="stats">
+            <div>⭐ <b>4.9/5</b><small>Ratings</small></div>
+            <div>🚴 <b>30 min</b><small>Average Delivery</small></div>
+            <div>🏪 <b>500+</b><small>Restaurants</small></div>
+        </div>
+    </div>
+
+    <div class="hero-food">
+        <div class="floating-card card-one">🔥 Best Seller<strong>Chicken Biryani</strong></div>
+        <div class="big-food">🍛</div>
+        <div class="floating-card card-two">⭐ 4.9<strong>Top Rated</strong></div>
+    </div>
+</section>
+
+<!-- CATEGORIES -->
+<section class="section">
+    <div class="container">
+        <h2>What are you craving?</h2>
+        <p class="subtitle">Choose your favorite category.</p>
+        <div class="categories">
+            <button onclick="filterCategory('All')">🍽️<span>All</span></button>
+            <button onclick="filterCategory('Pizza')">🍕<span>Pizza</span></button>
+            <button onclick="filterCategory('Burger')">🍔<span>Burger</span></button>
+            <button onclick="filterCategory('Indian')">🍛<span>Indian</span></button>
+            <button onclick="filterCategory('Chinese')">🍜<span>Chinese</span></button>
+            <button onclick="filterCategory('Dessert')">🍰<span>Dessert</span></button>
+        </div>
+    </div>
+</section>
+
+<!-- RESTAURANTS -->
+<section class="section light" id="restaurants">
+    <div class="container">
+        <div class="section-title">
+            <div><h2>Top Restaurants</h2><p>Highly rated restaurants near you.</p></div>
+            <button class="outline-btn" onclick="showToast('Showing all restaurants 🏪')">View All</button>
+        </div>
+        <div class="restaurant-grid">
+            <article class="restaurant-card" onclick="openRestaurant('Urban Slice','Italian • Pizza','4.9','25-30 min','🍕')">
+                <div class="restaurant-image">🍕</div>
+                <div class="restaurant-content"><h3>Urban Slice</h3><p>Italian • Pizza</p><span>⭐ 4.9 · 25-30 min</span></div>
+            </article>
+            <article class="restaurant-card" onclick="openRestaurant('Spice Route','Indian • Biryani','4.9','30-35 min','🍛')">
+                <div class="restaurant-image">🍛</div>
+                <div class="restaurant-content"><h3>Spice Route</h3><p>Indian • Biryani</p><span>⭐ 4.9 · 30-35 min</span></div>
+            </article>
+            <article class="restaurant-card" onclick="openRestaurant('Burger Lab','American • Burgers','4.8','20-25 min','🍔')">
+                <div class="restaurant-image">🍔</div>
+                <div class="restaurant-content"><h3>Burger Lab</h3><p>American • Burgers</p><span>⭐ 4.8 · 20-25 min</span></div>
+            </article>
+            <article class="restaurant-card" onclick="openRestaurant('Sweet Cravings','Bakery • Desserts','4.9','20-30 min','🍰')">
+                <div class="restaurant-image">🍰</div>
+                <div class="restaurant-content"><h3>Sweet Cravings</h3><p>Bakery • Desserts</p><span>⭐ 4.9 · 20-30 min</span></div>
+            </article>
+        </div>
+    </div>
+</section>
+
+<!-- MENU -->
+<section class="section" id="menu">
+    <div class="container">
+        <div class="section-title">
+            <div><h2>Popular Dishes</h2><p>Customer favorites.</p></div>
+            <select id="sortSelect" onchange="sortFood()">
+                <option value="popular">Popular</option>
+                <option value="low">Price: Low to High</option>
+                <option value="high">Price: High to Low</option>
+                <option value="rating">Top Rated</option>
+            </select>
+        </div>
+
+        <div class="filter-bar">
+            <label><input type="checkbox" id="vegOnly" onchange="applyFilters()"> Vegetarian only</label>
+            <label>Max ₹<input type="number" id="maxPrice" value="500" min="0" onchange="applyFilters()"></label>
+            <button class="outline-btn" onclick="clearFilters()">Clear Filters</button>
+        </div>
+
+        <div class="food-grid" id="foodGrid"></div>
+    </div>
+</section>
+
+<!-- WISHLIST -->
+<section class="section light" id="wishlistSection">
+    <div class="container">
+        <div class="section-title">
+            <div><h2>❤️ Your Wishlist</h2><p>Save dishes you want to order later.</p></div>
+            <span class="pill" id="wishlistCount">0 items</span>
+        </div>
+        <div class="food-grid" id="wishlistGrid"></div>
+        <div id="emptyWishlist" class="empty-box">No wishlist items yet. Tap ❤️ on any dish.</div>
+    </div>
+</section>
+
+<!-- OFFER -->
+<section class="offer" id="offers">
+    <div class="offer-content">
+        <div><small>LIMITED TIME OFFER</small><h2>20% OFF Your First Order 🎉</h2><p>Use coupon: <strong>FOOD20</strong></p></div>
+        <button onclick="copyCoupon()">Copy Coupon</button>
+    </div>
+</section>
+
+<!-- FEATURES -->
+<section class="section">
+    <div class="container">
+        <h2>Why choose FoodieGo?</h2>
+        <p class="subtitle">Everything you need for a better food delivery experience.</p>
+        <div class="features">
+            <div><div class="feature-icon">⚡</div><h3>Lightning Fast</h3><p>Get your favorite food delivered quickly.</p></div>
+            <div><div class="feature-icon">🔒</div><h3>Safe & Secure</h3><p>Secure and reliable ordering experience.</p></div>
+            <div><div class="feature-icon">⭐</div><h3>Trusted Restaurants</h3><p>Discover highly rated restaurants.</p></div>
+            <div><div class="feature-icon">💳</div><h3>Easy Payments</h3><p>Choose UPI, card, cash on delivery and more.</p></div>
+            <div><div class="feature-icon">📦</div><h3>Live Order Tracking</h3><p>Track your order from kitchen to doorstep.</p></div>
+            <div><div class="feature-icon">🎟️</div><h3>Smart Offers</h3><p>Apply coupons and save on your favorite meals.</p></div>
+        </div>
+    </div>
+</section>
+
+<!-- ORDER HISTORY -->
+<section class="section" id="orders">
+    <div class="container">
+        <div class="section-title"><div><h2>📦 Order History</h2><p>Your recent FoodieGo orders.</p></div></div>
+        <div id="ordersList" class="orders-list"></div>
+    </div>
+</section>
+
+
+<!-- SUPPORT -->
+<section class="section support-section" id="support">
+    <div class="container">
+        <div class="section-title">
+            <div><h2>📞 Help & Support</h2><p>We are here when you need us.</p></div>
+        </div>
+        <div class="support-grid">
+            <div class="support-card"><span>💬</span><h3>Live Support</h3><p>Get help with an order or payment.</p><button class="outline-btn" onclick="openSupport('Live Chat')">Start Chat</button></div>
+            <div class="support-card"><span>📞</span><h3>Call Support</h3><p>Talk to our customer support team.</p><button class="outline-btn" onclick="openSupport('Call Support')">Contact Us</button></div>
+            <div class="support-card"><span>📧</span><h3>Email Support</h3><p>Send us your query anytime.</p><button class="outline-btn" onclick="openSupport('Email Support')">Send Query</button></div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ -->
+<section class="section light" id="faq">
+    <div class="container">
+        <h2>❓ Frequently Asked Questions</h2>
+        <p class="subtitle">Quick answers to common questions.</p>
+        <div class="faq-list">
+            <details><summary>How can I place an order?</summary><p>Add dishes to your cart, open Checkout, enter your details and choose a payment method.</p></details>
+            <details><summary>Can I track my order?</summary><p>Yes. Open Order History and select Track Order to see the delivery timeline.</p></details>
+            <details><summary>How do coupons work?</summary><p>Enter FOOD20 for 20% off or FIRST50 for up to ₹50 off in the cart.</p></details>
+            <details><summary>Is cash on delivery available?</summary><p>Yes, Cash on Delivery is available as a demo payment option.</p></details>
+        </div>
+    </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="section" id="reviews">
+    <div class="container">
+        <h2>⭐ What Customers Say</h2>
+        <p class="subtitle">A few sample customer experiences.</p>
+        <div class="testimonial-grid">
+            <div class="testimonial">“Fast delivery and the food arrived fresh.”<strong>— Priya S.</strong></div>
+            <div class="testimonial">“The menu is simple to browse and ordering is easy.”<strong>— Rahul M.</strong></div>
+            <div class="testimonial">“I loved the live order tracking experience.”<strong>— Sneha D.</strong></div>
+        </div>
+    </div>
+</section>
+
+<!-- FOUNDER -->
+<section class="founder" id="founder">
+    <div class="founder-image-wrap"><img src="founder(1).jpg" alt="Founder of FoodieGo"></div>
+    <div class="founder-content">
+        <small>FOUNDER &amp; PRODUCT DEVELOPER</small>
+        <h2>Arghya Das</h2>
+        <h3>Founder of FoodieGo</h3>
+        <p class="founder-role">B.Tech CSE · Technology &amp; Development · FoodieGo</p>
+        <p>Building FoodieGo to make food delivery simple, fast and convenient.</p>
+        <div class="founder-meta"><span>🚀 Product &amp; Development</span><span>🍴 FoodieGo</span><span>🎓 College Project · 2026</span></div>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+    <div class="footer-container">
+        <div><h2>🍴 Foodie<span>Go</span></h2><p>Fresh food. Fast delivery.<br>Better experience.</p></div>
+        <div><h3>Quick Links</h3><p><a href="#home">Home</a> · <a href="#menu">Menu</a> · <a href="#offers">Offers</a> · <a href="#restaurants">Restaurants</a></p><p><a href="#support">Support</a><a href="#features200">200 Features</a> · <a href="#faq">FAQ</a> · <a href="#reviews">Reviews</a></p></div>
+        <div><h3>Project</h3><p>Online Food Delivery System</p><p>Founded by Arghya Das</p><p>College Project · 2026</p></div>
+    </div>
+</footer>
+
+<!-- CART -->
+<div class="overlay" id="overlay" onclick="closeCart()"></div>
+<aside class="cart-panel" id="cartPanel">
+    <div class="cart-header"><h2>Your Cart 🛒</h2><button onclick="closeCart()">×</button></div>
+    <div id="cartItems"></div>
+    <div class="cart-summary">
+        <div class="coupon-row"><input id="couponInput" placeholder="Coupon code"><button onclick="applyCoupon()">Apply</button></div>
+        <p>Subtotal:<strong>₹<span id="subtotal">0</span></strong></p>
+        <p>Discount:<strong>-₹<span id="discount">0</span></strong></p>
+        <p>Delivery:<strong>₹<span id="delivery">40</span></strong></p>
+        <hr><h2>Total: ₹<span id="total">40</span></h2>
+        <button class="checkout-btn" onclick="openCheckout()">Proceed to Checkout</button>
+    </div>
+</aside>
+
+<!-- GENERIC MODAL -->
+<div class="modal" id="modal">
+    <div class="modal-box wide" id="modalContent"></div>
+</div>
+
+<!-- AUTH / ADMIN / OWNER DASHBOARDS -->
+<div class="dashboard-modal" id="dashboardModal">
+    <div class="dashboard-box" id="dashboardContent"></div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+<script src="script.js"></script>
+
+<script>
+window.FOODIEGO_200_GROUPS = [{"name": "Core Ordering", "features": [{"n": 1, "f": "Responsive home page"}, {"n": 2, "f": "Food category browsing"}, {"n": 3, "f": "Top restaurant listing"}, {"n": 4, "f": "Popular dishes"}, {"n": 5, "f": "Search food"}, {"n": 6, "f": "Search restaurants"}, {"n": 7, "f": "Category filtering"}, {"n": 8, "f": "Price sorting"}, {"n": 9, "f": "Rating sorting"}, {"n": 10, "f": "Veg / non-veg filtering"}, {"n": 11, "f": "Maximum price filter"}, {"n": 12, "f": "Restaurant details"}, {"n": 13, "f": "Dish details"}, {"n": 14, "f": "Add to cart"}, {"n": 15, "f": "Cart quantity controls"}, {"n": 16, "f": "Remove from cart"}, {"n": 17, "f": "Cart subtotal"}, {"n": 18, "f": "Delivery charge"}, {"n": 19, "f": "Order total"}, {"n": 20, "f": "Checkout flow"}]}, {"name": "Customer Experience", "features": [{"n": 21, "f": "Login"}, {"n": 22, "f": "Sign up"}, {"n": 23, "f": "Profile"}, {"n": 24, "f": "Saved addresses"}, {"n": 25, "f": "Multiple addresses"}, {"n": 26, "f": "Wishlist"}, {"n": 27, "f": "Favorite restaurants"}, {"n": 28, "f": "Recent searches"}, {"n": 29, "f": "Search suggestions"}, {"n": 30, "f": "Coupon codes"}, {"n": 31, "f": "First-order offer"}, {"n": 32, "f": "Smart offers"}, {"n": 33, "f": "Restaurant offers"}, {"n": 34, "f": "Deal of the day"}, {"n": 35, "f": "Flash sale"}, {"n": 36, "f": "Combo offers"}, {"n": 37, "f": "Gift cards"}, {"n": 38, "f": "Gift vouchers"}, {"n": 39, "f": "Save for later"}, {"n": 40, "f": "Re-order"}, {"n": 41, "f": "Order history"}, {"n": 42, "f": "Order tracking"}, {"n": 43, "f": "Order cancellation"}, {"n": 44, "f": "Refund status"}, {"n": 45, "f": "Wallet"}, {"n": 46, "f": "Wallet refunds"}, {"n": 47, "f": "Notifications"}, {"n": 48, "f": "Notification badge"}, {"n": 49, "f": "Mark notifications read"}, {"n": 50, "f": "Scheduled delivery"}]}, {"name": "Payments & Billing", "features": [{"n": 51, "f": "UPI payment"}, {"n": 52, "f": "Card payment"}, {"n": 53, "f": "Cash on delivery"}, {"n": 54, "f": "Payment method selection"}, {"n": 55, "f": "Invoice generation"}, {"n": 56, "f": "Printable invoice"}, {"n": 57, "f": "Tax/GST line item"}, {"n": 58, "f": "Discount calculation"}, {"n": 59, "f": "Delivery-fee calculation"}, {"n": 60, "f": "Refund calculation"}, {"n": 61, "f": "Coupon expiry alerts"}, {"n": 62, "f": "Free-delivery coupon"}, {"n": 63, "f": "Minimum-order validation"}, {"n": 64, "f": "Payment status"}, {"n": 65, "f": "Order ID generation"}, {"n": 66, "f": "Digital receipt"}, {"n": 67, "f": "Payout report"}, {"n": 68, "f": "Restaurant settlement"}, {"n": 69, "f": "Commission management"}, {"n": 70, "f": "Tax configuration"}]}, {"name": "Restaurant & Kitchen", "features": [{"n": 71, "f": "Restaurant owner login"}, {"n": 72, "f": "Restaurant dashboard"}, {"n": 73, "f": "Restaurant order queue"}, {"n": 74, "f": "Order status updates"}, {"n": 75, "f": "Menu management"}, {"n": 76, "f": "Food availability toggle"}, {"n": 77, "f": "Restaurant open/closed status"}, {"n": 78, "f": "Branch management"}, {"n": 79, "f": "Restaurant staff accounts"}, {"n": 80, "f": "Role-based access"}, {"n": 81, "f": "Kitchen display"}, {"n": 82, "f": "Preparation timer"}, {"n": 83, "f": "Pre-order"}, {"n": 84, "f": "Waitlist"}, {"n": 85, "f": "Pickup ordering"}, {"n": 86, "f": "Dine-in ordering"}, {"n": 87, "f": "QR menu"}, {"n": 88, "f": "Table reservation"}, {"n": 89, "f": "Catering orders"}, {"n": 90, "f": "Event food booking"}, {"n": 91, "f": "Home chef listing"}, {"n": 92, "f": "Cloud kitchen listing"}, {"n": 93, "f": "Restaurant performance score"}, {"n": 94, "f": "Restaurant analytics"}, {"n": 95, "f": "Restaurant loyalty program"}]}, {"name": "Delivery", "features": [{"n": 96, "f": "Delivery partner login"}, {"n": 97, "f": "Delivery partner dashboard"}, {"n": 98, "f": "Assigned orders"}, {"n": 99, "f": "Pickup status"}, {"n": 100, "f": "Delivery status"}, {"n": 101, "f": "Delivery earnings"}, {"n": 102, "f": "Partner availability"}, {"n": 103, "f": "Partner shift management"}, {"n": 104, "f": "Partner attendance"}, {"n": 105, "f": "Partner performance"}, {"n": 106, "f": "Smart delivery assignment"}, {"n": 107, "f": "Delivery ETA"}, {"n": 108, "f": "Delivery fee calculator"}, {"n": 109, "f": "Delivery zones"}, {"n": 110, "f": "Geo-fencing"}, {"n": 111, "f": "Route optimization"}, {"n": 112, "f": "Batch delivery"}, {"n": 113, "f": "Contactless delivery"}, {"n": 114, "f": "Delivery instructions"}, {"n": 115, "f": "Delivery OTP"}, {"n": 116, "f": "Digital delivery proof"}, {"n": 117, "f": "Emergency support"}, {"n": 118, "f": "Delivery chat"}, {"n": 119, "f": "Traffic-aware ETA"}, {"n": 120, "f": "Delay prediction"}]}, {"name": "Admin & Analytics", "features": [{"n": 121, "f": "Admin login"}, {"n": 122, "f": "User management"}, {"n": 123, "f": "Order management"}, {"n": 124, "f": "Menu management"}, {"n": 125, "f": "Support ticket management"}, {"n": 126, "f": "Analytics dashboard"}, {"n": 127, "f": "Revenue analytics"}, {"n": 128, "f": "Average order value"}, {"n": 129, "f": "Top dishes"}, {"n": 130, "f": "Top restaurants"}, {"n": 131, "f": "Cancellation analytics"}, {"n": 132, "f": "Sales forecasting"}, {"n": 133, "f": "Demand forecasting"}, {"n": 134, "f": "Peak-hour detection"}, {"n": 135, "f": "Customer spending analytics"}, {"n": 136, "f": "Customer lifetime value"}, {"n": 137, "f": "Churn prediction"}, {"n": 138, "f": "Coupon management"}, {"n": 139, "f": "Announcement panel"}, {"n": 140, "f": "Maintenance mode"}, {"n": 141, "f": "Audit logs"}, {"n": 142, "f": "Advanced audit trail"}, {"n": 143, "f": "Data export"}, {"n": 144, "f": "Automated reports"}, {"n": 145, "f": "Real-time admin alerts"}, {"n": 146, "f": "Backup/restore demo"}, {"n": 147, "f": "System health dashboard"}, {"n": 148, "f": "Performance monitoring"}, {"n": 149, "f": "Error monitoring"}, {"n": 150, "f": "Super admin control center"}]}, {"name": "AI & Smart Features", "features": [{"n": 151, "f": "AI food recommendations"}, {"n": 152, "f": "AI chatbot"}, {"n": 153, "f": "Voice search UI"}, {"n": 154, "f": "Voice ordering UI"}, {"n": 155, "f": "AI review summary"}, {"n": 156, "f": "AI customer support"}, {"n": 157, "f": "Order prediction"}, {"n": 158, "f": "Smart meal recommendation"}, {"n": 159, "f": "Nutrition assistant"}, {"n": 160, "f": "Meal planner"}, {"n": 161, "f": "Budget meal planner"}, {"n": 162, "f": "Diet preference profile"}, {"n": 163, "f": "Calorie information"}, {"n": 164, "f": "Ingredient information"}, {"n": 165, "f": "Allergen information"}, {"n": 166, "f": "Spice level"}, {"n": 167, "f": "Food customization"}, {"n": 168, "f": "Cooking instructions"}, {"n": 169, "f": "AI review sentiment"}, {"n": 170, "f": "Fake-review detection"}, {"n": 171, "f": "Food image recognition UI"}, {"n": 172, "f": "Visual food search UI"}, {"n": 173, "f": "Similar food finder"}, {"n": 174, "f": "Dynamic menu pricing demo"}, {"n": 175, "f": "Smart inventory prediction"}]}, {"name": "Loyalty & Community", "features": [{"n": 176, "f": "Food waste prediction"}, {"n": 177, "f": "Automatic stock replenishment"}, {"n": 178, "f": "Kitchen workload prediction"}, {"n": 179, "f": "Delivery traffic prediction"}, {"n": 180, "f": "AI restaurant ranking"}, {"n": 181, "f": "AI coupon recommendation"}, {"n": 182, "f": "Loyalty membership"}, {"n": 183, "f": "Points history"}, {"n": 184, "f": "Referral system"}, {"n": 185, "f": "First-order bonus"}, {"n": 186, "f": "Birthday offers"}, {"n": 187, "f": "Tier rewards"}, {"n": 188, "f": "Achievement badges"}, {"n": 189, "f": "Food streak"}, {"n": 190, "f": "Leaderboard"}, {"n": 191, "f": "Spin & win"}, {"n": 192, "f": "Scratch-card reward"}, {"n": 193, "f": "Lucky order reward"}, {"n": 194, "f": "Mystery food box"}, {"n": 195, "f": "Surprise-me button"}, {"n": 196, "f": "Taste profile"}, {"n": 197, "f": "Community food feed"}, {"n": 198, "f": "Follow restaurant"}, {"n": 199, "f": "Restaurant stories"}, {"n": 200, "f": "Customer testimonials"}]}];
+</script>
+
+<script>
+(async function(){
+  const el=document.getElementById("foodieBackendStatus");
+  if(!el)return;
+  try{
+    const r=await fetch("/api/health");
+    if(r.ok){el.textContent="● Backend connected";el.style.borderColor="#22c55e";}
+    else throw new Error();
+  }catch(e){
+    el.textContent="○ Demo mode (localStorage)";
+  }
+})();
+</script>
+</body>
+
+</html>

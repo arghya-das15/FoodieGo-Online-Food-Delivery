@@ -1,0 +1,18 @@
+FOODIEGO 200 — SIMPLE VERSION
+
+1. Extract the ZIP.
+2. Double-click RUN_FOODIEGO.bat.
+3. Keep the black window open.
+4. Open Chrome/Edge.
+5. Go to http://localhost:3000
+6. Login -> Sign Up -> create your new account.
+
+NO npm install is needed.
+
+Demo:
+Admin: admin@foodiego.com / admin123
+Owner: owner@foodiego.com / owner123
+Delivery: delivery@foodiego.com / delivery123
+
+If the website says "Request failed", it means the server is not running or you opened index.html directly.
+Always use http://localhost:3000.

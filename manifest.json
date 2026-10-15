@@ -1,0 +1,8 @@
+{
+  "name": "FoodieGo - Food Delivery",
+  "short_name": "FoodieGo",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ff5a36"
+}
